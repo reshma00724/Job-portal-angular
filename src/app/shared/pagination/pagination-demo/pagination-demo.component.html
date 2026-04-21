@@ -1,0 +1,67 @@
+<div class="pagination-container">
+  <h2>Users List</h2>
+
+  <!-- Users Table -->
+  <div class="users-list">
+    @if (paginatedUsers.length > 0) {
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of paginatedUsers; track user.id) {
+            <tr>
+              <td>{{ user.id }}</td>
+              <td>{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p>No users found</p>
+    }
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="pagination-controls">
+    <!-- Previous Button -->
+    <button
+      class="btn btn-nav"
+      (click)="goToPrevious()"
+      [disabled]="isFirstPage()"
+    >
+      ← Previous
+    </button>
+
+    <!-- Page Numbers -->
+    <div class="page-numbers">
+      @for (pageNum of pageNumbers; track pageNum) {
+        <button
+          class="page-btn"
+          [class.active]="pageNum === currentPage()"
+          (click)="goToPage(pageNum)"
+        >
+          {{ pageNum }}
+        </button>
+      }
+    </div>
+
+    <!-- Next Button -->
+    <button class="btn btn-nav" (click)="goToNext()" [disabled]="isLastPage()">
+      Next →
+    </button>
+  </div>
+
+  <!-- Page Info -->
+  <div class="page-info">
+    <p>
+      Page <strong>{{ currentPage() }}</strong> of <strong>{{ totalPages }}</strong> | Total Users:
+      <strong>{{ allUsers.length }}</strong>
+    </p>
+  </div>
+</div>

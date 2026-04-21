@@ -1,0 +1,129 @@
+<div class="real-pagination-container">
+  <h2>Candidates Management</h2>
+
+  <!-- Search & Filter Section -->
+  <div class="search-section">
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Search candidates by name or email..."
+        (keyup)="onSearch($event.target.value)"
+        [value]="searchTerm()"
+      />
+    </div>
+
+    <div class="sort-box">
+      <label>Sort by:</label>
+      <select (change)="onSort($event.target.value)" [value]="sortBy()">
+        <option value="date">Latest (Date)</option>
+        <option value="name">Name (A-Z)</option>
+        <option value="status">Status</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading">
+      <p>Loading candidates...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+    <div class="error-message">
+      <p>⚠️ {{ error() }}</p>
+      <button (click)="loadCandidates()">Try Again</button>
+    </div>
+  }
+
+  <!-- Data Table -->
+  @if (!isLoading() && !error() && candidates().length > 0) {
+    <div class="table-section">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Position</th>
+            <th>Status</th>
+            <th>Applied Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (candidate of candidates(); track candidate.id) {
+            <tr>
+              <td>{{ candidate.id }}</td>
+              <td>{{ candidate.name }}</td>
+              <td>{{ candidate.email }}</td>
+              <td>{{ candidate.position }}</td>
+              <td>
+                <span class="status" [class]="'status-' + candidate.status.toLowerCase()">
+                  {{ candidate.status }}
+                </span>
+              </td>
+              <td>{{ candidate.appliedDate | date: 'short' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- No Results -->
+  @if (!isLoading() && !error() && candidates().length === 0) {
+    <div class="no-results">
+      <p>No candidates found matching your search.</p>
+    </div>
+  }
+
+  <!-- Pagination Controls -->
+  @if (!isLoading() && totalPages() > 1) {
+    <div class="pagination-section">
+      <!-- Previous Button -->
+      <button 
+        class="btn btn-nav" 
+        (click)="goToPrevious()" 
+        [disabled]="isFirstPage()"
+      >
+        ← Previous
+      </button>
+
+      <!-- Page Numbers -->
+      <div class="page-numbers">
+        @for (page of pageNumbers; track page) {
+          <button
+            class="page-btn"
+            [class.active]="page === currentPage()"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+        }
+      </div>
+
+      <!-- Next Button -->
+      <button 
+        class="btn btn-nav" 
+        (click)="goToNext()" 
+        [disabled]="isLastPage()"
+      >
+        Next →
+      </button>
+    </div>
+  }
+
+  <!-- Info Section -->
+  @if (!isLoading() && totalItems() > 0) {
+    <div class="pagination-info">
+      <p>
+        Showing <strong>{{ startNumber }}</strong> to 
+        <strong>{{ endNumber }}</strong> of 
+        <strong>{{ totalItems() }}</strong> candidates | 
+        Page <strong>{{ currentPage() }}</strong> of 
+        <strong>{{ totalPages() }}</strong>
+      </p>
+    </div>
+  }
+</div>

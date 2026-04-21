@@ -1,0 +1,15 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+  <input type="text" placeholder="Username" formControlName="username" />
+  <div *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
+    Username is required
+  </div>
+
+  <input type="password" placeholder="Password" formControlName="password" />
+  <div *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+    Password is required
+  </div>
+
+  <button type="submit">Login</button>
+
+</form>

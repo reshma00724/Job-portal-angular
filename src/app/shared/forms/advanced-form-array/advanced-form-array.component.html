@@ -1,0 +1,122 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h3>Skills Management</h3>
+
+  <div formArrayName="skills">
+    @for (skill of skills.controls; track $index; let i = $index) {
+      <div [formGroupName]="i" class="skill-item">
+        <div class="form-group">
+          <label for="skill-{{ i }}">Skill Name:</label>
+          <input
+            id="skill-{{ i }}"
+            type="text"
+            formControlName="skillName"
+            class="form-control"
+            placeholder="e.g., Angular, TypeScript"
+          />
+          @if (
+            showErrors &&
+            skills.at(i).get('skillName')?.invalid &&
+            skills.at(i).get('skillName')?.touched
+          ) {
+            <span class="error-message">
+              @if (skills.at(i).get('skillName')?.hasError('required')) {
+                Skill name is required
+              }
+              @if (skills.at(i).get('skillName')?.hasError('minlength')) {
+                Skill name must be at least 2 characters
+              }
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="proficiency-{{ i }}">Proficiency Level:</label>
+          <select
+            id="proficiency-{{ i }}"
+            formControlName="proficiency"
+            class="form-control"
+          >
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+            <option value="expert">Expert</option>
+          </select>
+          @if (
+            showErrors &&
+            skills.at(i).get('proficiency')?.invalid &&
+            skills.at(i).get('proficiency')?.touched
+          ) {
+            <span class="error-message">
+              Proficiency level is required
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="experience-{{ i }}">Years of Experience:</label>
+          <input
+            id="experience-{{ i }}"
+            type="number"
+            formControlName="yearsOfExperience"
+            class="form-control"
+            placeholder="0"
+            min="0"
+            max="50"
+          />
+          @if (
+            showErrors &&
+            skills.at(i).get('yearsOfExperience')?.invalid &&
+            skills.at(i).get('yearsOfExperience')?.touched
+          ) {
+            <span class="error-message">
+              @if (
+                skills.at(i).get('yearsOfExperience')?.hasError('required')
+              ) {
+                Years of experience is required
+              }
+              @if (skills.at(i).get('yearsOfExperience')?.hasError('min')) {
+                Years must be at least 0
+              }
+              @if (skills.at(i).get('yearsOfExperience')?.hasError('max')) {
+                Years cannot exceed 50
+              }
+            </span>
+          }
+        </div>
+
+        <button
+          type="button"
+          (click)="removeSkill(i)"
+          class="btn btn-danger"
+          [disabled]="skills.length === 1"
+        >
+          Remove Skill
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (showErrors && skills.hasError('minItems')) {
+    <div class="array-error">
+      Please add at least 1 skill
+    </div>
+  }
+
+  @if (showErrors && skills.hasError('maxItems')) {
+    <div class="array-error">
+      Cannot add more than 10 skills
+    </div>
+  }
+
+  <div class="form-actions">
+    <button type="button" (click)="addSkill()" class="btn btn-primary">
+      Add Skill
+    </button>
+    <button type="submit" class="btn btn-success" [disabled]="form.invalid">
+      Submit
+    </button>
+    <button type="button" (click)="resetForm()" class="btn btn-secondary">
+      Reset
+    </button>
+  </div>
+</form>
